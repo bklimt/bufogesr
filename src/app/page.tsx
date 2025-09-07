@@ -1,21 +1,33 @@
-import Image from "next/image";
+'use client';
+
 import styles from "./page.module.css";
 import Game from "./game";
+import allbufos from "./allbufos";
+import { useRouter, useSearchParams } from "next/navigation";
+import Intro from "./intro";
 
 export default function Home() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  let index: number = -1;
+  const indexStr = searchParams.get("index");
+  if (indexStr) {
+    index = parseInt(indexStr);
+  } else {
+    // index = Math.floor(Math.random() * allbufos.length);
+    // router.push("/?index=" + index);
+  }
+
+  const file = index > 0 ? allbufos[index].split(".") : null;
+  const word = file ? file[0] : null;
+  const type = file ? file[1] : "png";
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        {/* <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        /> */}
-
-        <Game word="bufo-brings-you-love"></Game>
+        {!word && <Intro></Intro>}
+        {word && <Game word={word} type={type} key={searchParams.get("index")}></Game>}
 
         <div className={styles.ctas}>
           {/* <a

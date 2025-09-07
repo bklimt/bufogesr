@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import allbufos from "./allbufos";
+import { useRouter } from "next/navigation";
 
 function hasBeenGuessed(c: string, guesses: string): boolean {
     return !c.match(/[a-z]/i) || guesses.indexOf(c.toLowerCase()) >= 0;
@@ -10,10 +12,18 @@ function fillOutGuesses(word: string, guesses: string): string {
     return word.split('').map(c => hasBeenGuessed(c, guesses) ? c : "_").join('');
 }
 
-export default function Game(props: { word: string }) {
+function getRandomIndex(): number {
+    return Math.floor(Math.random() * allbufos.length);
+}
+
+export default function Game(props: { word: string, type: string }) {
     const [guesses, setGuesses] = useState("bufo");
     const [guess, setGuess] = useState(fillOutGuesses(props.word, "bufo"));
     const [misses, setMisses] = useState("");
+    const [won, setWon] = useState(false);
+    const [done, setDone] = useState(false);
+
+    const router = useRouter();
 
     function guessLetter(c: string) {
         const newGuesses = guesses + c.toLowerCase();
@@ -23,9 +33,17 @@ export default function Game(props: { word: string }) {
 
     function updateGuess(guesses: string) {
         const word = props.word;
-        setGuess(fillOutGuesses(word, guesses));
+        const guess = fillOutGuesses(word, guesses);
+        setGuess(guess);
         const missCount = guesses.split('').filter(c => word.indexOf(c) < 0).length;
         setMisses("X ".repeat(missCount).trim());
+        if (word === guess) {
+            setWon(true);
+            setDone(true);
+        }
+        if (missCount >= 5) {
+            setDone(true);
+        }
     }
 
     function Letter(props: { letter: string }) {
@@ -41,14 +59,34 @@ export default function Game(props: { word: string }) {
         );
     }
 
+    function newWord() {
+        router.push("/?index=" + getRandomIndex());
+    }
+
+    const handleKeyDown = useCallback((event: { key: string; }) => {
+        if (event.key.match(/[a-z]/i)) {
+            if (guesses.indexOf(event.key.toLowerCase()) < 0) {
+                guessLetter(event.key);
+            }
+        }
+    }, [guesses]);
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
     return (
-        <div>
-            <p className="guess">
-                <span className="guess">{guess}</span>
-            </p>
-            <p className="misses">
-                <span className="misses">{misses}</span>
-            </p>
+        <div className="game">
+            <img
+                src={"https://raw.githubusercontent.com/knobiknows/all-the-bufo/refs/heads/main/all-the-bufo/" + props.word + "." + props.type}
+                height={200}
+                alt="the mystery bufo"
+            />
+            <div className="guess">{guess}</div>
+            {!won && <div className="misses">{misses}</div>}
+            {won && <div className="won">You won!</div>}
             <table>
                 <tbody>
                     <tr>
@@ -87,6 +125,8 @@ export default function Game(props: { word: string }) {
                     </tr>
                 </tbody>
             </table>
-        </div>
+            <p className="padded"></p>
+            {done && <button onClick={newWord}>Give me another!</button>}
+        </div >
     );
 }

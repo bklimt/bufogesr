@@ -35,25 +35,47 @@ a {
   text-decoration: none;
 }
 
-p.guess {
-  padding-top: 40px;
-  padding-bottom: 60px;
+button {
+  font-size: 36px;
+  padding: 20px;
+}
+
+div#intro {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-p.misses {
-  height: 100px;
-}
-
-span.guess {
-  font-size: 36px;
+div.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
 }
 
-span.misses {
+p.padded {
+  padding: 20px;
+}
+
+div.guess {
+  font-size: 36px;
+  text-align: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+div.misses {
   font-size: 48px;
   color: red;
   text-align: center;
+  height: 100px;
+}
+
+div.won {
+  font-size: 48px;
+  color: lightgreen;
+  text-align: center;
+  height: 100px;
 }
 
 button.letter {
