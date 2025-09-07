@@ -93,7 +93,7 @@ export default function Game(props: { word: string, type: string }) {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [handleKeyDown]);
+    }, [handleKeyDown, guesses]);
 
     return (
         <div className="game">
