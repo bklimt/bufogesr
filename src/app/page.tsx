@@ -5,7 +5,7 @@ import Game from "./game";
 import allbufos from "./allbufos";
 import { useSearchParams } from "next/navigation";
 import Intro from "./intro";
-import { Suspense, useEffect } from "react";
+import { Suspense } from "react";
 
 import { HoneycombWebSDK, WebVitalsInstrumentation } from '@honeycombio/opentelemetry-web';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
