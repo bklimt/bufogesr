@@ -7,7 +7,7 @@ function getRandomIndex(): number {
     return Math.floor(Math.random() * allbufos.length);
 }
 
-export default function Intro(props: {}) {
+export default function Intro() {
     const router = useRouter();
 
     return (

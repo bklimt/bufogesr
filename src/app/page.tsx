@@ -3,20 +3,17 @@
 import styles from "./page.module.css";
 import Game from "./game";
 import allbufos from "./allbufos";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Intro from "./intro";
+import { Suspense } from "react";
 
-export default function Home() {
-  const router = useRouter();
+function Content() {
   const searchParams = useSearchParams();
 
   let index: number = -1;
   const indexStr = searchParams.get("index");
   if (indexStr) {
     index = parseInt(indexStr);
-  } else {
-    // index = Math.floor(Math.random() * allbufos.length);
-    // router.push("/?index=" + index);
   }
 
   const file = index > 0 ? allbufos[index].split(".") : null;
@@ -100,5 +97,13 @@ export default function Home() {
         </a> */}
       </footer>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense>
+      <Content></Content>
+    </Suspense>
   );
 }
