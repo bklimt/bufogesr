@@ -5,7 +5,10 @@ import Game from "./game";
 import allbufos from "./allbufos";
 import { useSearchParams } from "next/navigation";
 import Intro from "./intro";
-import { Suspense } from "react";
+import { Suspense, useEffect } from "react";
+
+import { HoneycombWebSDK, WebVitalsInstrumentation } from '@honeycombio/opentelemetry-web';
+import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 
 function Content() {
   const searchParams = useSearchParams();
@@ -101,6 +104,13 @@ function Content() {
 }
 
 export default function Home() {
+  const sdk = new HoneycombWebSDK({
+    apiKey: 'hcaik_01k4jvwsks42hdtyna4mks9ybmbtpj8wssf98gjjmb6wyz3h19rqy38xp2',
+    serviceName: 'bufogesr',
+    instrumentations: [getWebAutoInstrumentations(), new WebVitalsInstrumentation()],
+  });
+  sdk.start();
+
   return (
     <Suspense>
       <Content></Content>

@@ -4,6 +4,8 @@ import { useCallback, useEffect, useState } from "react";
 import allbufos from "./allbufos";
 import { useRouter } from "next/navigation";
 
+import { trace } from '@opentelemetry/api';
+
 function hasBeenGuessed(c: string, guesses: string): boolean {
     return !c.match(/[a-z]/i) || guesses.indexOf(c.toLowerCase()) >= 0;
 }
@@ -25,6 +27,8 @@ export default function Game(props: { word: string, type: string }) {
 
     const router = useRouter();
 
+    const tracer = trace.getTracer("bufogesr-game");
+
     function guessLetter(c: string) {
         const newGuesses = guesses + c.toLowerCase();
         setGuesses(newGuesses);
@@ -38,10 +42,23 @@ export default function Game(props: { word: string, type: string }) {
         const missCount = guesses.split('').filter(c => word.indexOf(c) < 0).length;
         setMisses("X ".repeat(missCount).trim());
         if (word === guess) {
+            if (!done) {
+                const span = tracer.startSpan("win");
+                span.setAttribute("word", word);
+                span.setAttribute("guesses", guesses);
+                span.end();
+            }
+
             setWon(true);
             setDone(true);
         }
         if (missCount >= 5) {
+            if (!done) {
+                const span = tracer.startSpan("loss");
+                span.setAttribute("word", word);
+                span.setAttribute("guesses", guesses);
+                span.end();
+            }
             setDone(true);
         }
     }
@@ -70,6 +87,7 @@ export default function Game(props: { word: string, type: string }) {
             }
         }
     }, [guesses]);
+
     useEffect(() => {
         window.addEventListener('keydown', handleKeyDown);
         return () => {
