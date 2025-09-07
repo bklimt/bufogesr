@@ -64,7 +64,7 @@ export default function Game(props: { word: string, type: string }) {
     }
 
     const handleKeyDown = useCallback((event: { key: string; }) => {
-        if (event.key.match(/[a-z]/i)) {
+        if (event.key.length === 1 && event.key.match(/[a-z]/i)) {
             if (guesses.indexOf(event.key.toLowerCase()) < 0) {
                 guessLetter(event.key);
             }
